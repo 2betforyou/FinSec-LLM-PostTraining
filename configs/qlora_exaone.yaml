@@ -1,0 +1,26 @@
+base_model: LGAI-EXAONE/EXAONE-3.5-7.8B-Instruct
+method: qlora_sft
+quantization:
+  load_in_4bit: true
+  quant_type: nf4
+  double_quant: true
+  compute_dtype: bfloat16
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+training:
+  learning_rate: 0.0002
+  scheduler: cosine
+  warmup_ratio: 0.05
+  assistant_only_loss: true
+  eval_metric: eval_loss
+  save_adapter_only: true

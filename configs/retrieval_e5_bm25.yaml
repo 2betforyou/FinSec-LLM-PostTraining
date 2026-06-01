@@ -1,0 +1,12 @@
+embedding_model: intfloat/multilingual-e5-base
+chunking:
+  chunk_chars: 900
+  chunk_overlap: 200
+retrieval:
+  vector_index: faiss
+  vector_metric: cosine
+  lexical_index: bm25
+  top_k: 6
+generation:
+  max_new_tokens: 320
+  temperature: 0.2

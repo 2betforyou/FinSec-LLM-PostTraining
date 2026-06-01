@@ -1,0 +1,3 @@
+type,question,options,answer
+MCQ,Which control is most directly related to access management?,"1. Encryption 2. Identity verification 3. Data deletion 4. Backup",2
+SHORT,What should a financial-security QA model do when retrieved evidence is insufficient?,State that the evidence is insufficient and avoid unsupported conclusions.
