@@ -38,6 +38,6 @@ The appropriate way to describe this project is:
 
 Avoid saying:
 
-> Fine-tuned GraphRAG.
+> Fine-tuned the retrieval module.
 
-GraphRAG/RAG is the retrieval and evidence layer. The fine-tuned component is the language model adapter used in the QA pipeline.
+Retrieval is the evidence layer. The fine-tuned component is the language model adapter used in the QA pipeline.

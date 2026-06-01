@@ -29,8 +29,8 @@ Recent work usually approaches this problem from one of four directions.
 **Retrieval-Augmented Generation.**  
 RAG combines a parametric language model with external retrieval so the model can use non-parametric memory at generation time. The original RAG formulation showed the value of retrieval for knowledge-intensive NLP tasks, and modern production systems commonly use dense retrieval, BM25, hybrid retrieval, and reranking to ground answers in external documents. See [Lewis et al., 2020](https://arxiv.org/abs/2005.11401).
 
-**Graph-based RAG.**  
-Recent GraphRAG-style systems organize documents as graph structures instead of only flat chunks. This can help when the answer depends on relationships across entities, sections, or communities of documents. Microsoft GraphRAG and LightRAG are representative examples of this direction. See [Microsoft GraphRAG](https://www.microsoft.com/en-us/research/project/graphrag/) and [LightRAG, 2024](https://arxiv.org/abs/2410.05779).
+**Graph-based retrieval.**  
+Recent retrieval systems increasingly organize documents as graph structures instead of only flat chunks. This can help when the answer depends on relationships across entities, sections, clauses, or communities of documents. LightRAG is one representative example of this direction. See [LightRAG, 2024](https://arxiv.org/abs/2410.05779).
 
 **Parameter-efficient fine-tuning.**  
 QLoRA makes it possible to fine-tune large language models with 4-bit quantization and LoRA adapters, reducing memory requirements while preserving useful adaptation behavior. This is a natural fit when full fine-tuning is too expensive but domain adaptation is still needed. See [Dettmers et al., 2023](https://arxiv.org/abs/2305.14314).
@@ -110,7 +110,7 @@ The expected experiments compare the following systems:
 | RAG-only | Yes | No | Tests whether evidence retrieval improves factual grounding |
 | QLoRA-only | No | Yes | Tests whether SFT improves format and domain response style |
 | RAG + QLoRA | Yes | Yes | Tests whether evidence and learned answer behavior are complementary |
-| GraphRAG + QLoRA | Graph-style | Yes | Tests whether relational document structure helps harder regulatory questions |
+| Relational RAG + QLoRA | Graph-style | Yes | Tests whether relational document structure helps harder regulatory questions |
 
 Evaluation should include:
 
@@ -135,7 +135,7 @@ src/
   data/          data conversion, augmentation, and law merging scripts
   training/      QLoRA SFT and adapter training scripts
   retrieval/     FAISS/BM25 retrieval and RAG generation scripts
-  graphrag/      graph-based retrieval experiments
+  graph_retrieval/ graph-based retrieval experiments
   inference/     challenge-style inference prototype
   evaluation/    answer evaluation helpers
 configs/         example training and retrieval configs
@@ -150,7 +150,7 @@ Representative files:
 - [`src/training/train_qlora_fin_term.py`](src/training/train_qlora_fin_term.py): QLoRA SFT with label-preserving packing and early stopping
 - [`src/retrieval/build_index.py`](src/retrieval/build_index.py): build FAISS/BM25 retrieval index
 - [`src/retrieval/ask_rag.py`](src/retrieval/ask_rag.py): retrieve evidence and generate answers
-- [`src/graphrag/`](src/graphrag): graph-based document retrieval experiments
+- [`src/graph_retrieval/`](src/graph_retrieval): graph-based document retrieval experiments
 
 ## Quick Start
 
@@ -205,8 +205,8 @@ The scripts assume local model execution and local datasets. Model weights, trai
 **Retrieval-Augmented Generation.**  
 RAG는 LLM이 생성 과정에서 외부 문서를 검색해 사용할 수 있도록 합니다. 원래의 RAG 연구는 knowledge-intensive NLP task에서 retrieval의 효과를 보였고, 이후 실제 시스템에서는 dense retrieval, BM25, hybrid retrieval, reranking 등을 조합해 답변을 외부 문서에 grounding하는 방식이 널리 쓰이고 있습니다. See [Lewis et al., 2020](https://arxiv.org/abs/2005.11401).
 
-**Graph-based RAG.**  
-GraphRAG 계열 방법은 문서를 단순 chunk 목록이 아니라 entity, section, community, relation 등의 graph 구조로 다룹니다. 이는 답변이 여러 조항, 개념, 문서 간 관계에 의존할 때 도움이 될 수 있습니다. Microsoft GraphRAG와 LightRAG가 대표적인 예입니다. See [Microsoft GraphRAG](https://www.microsoft.com/en-us/research/project/graphrag/) and [LightRAG, 2024](https://arxiv.org/abs/2410.05779).
+**Graph-based retrieval.**  
+최근 retrieval 시스템은 문서를 단순 chunk 목록이 아니라 entity, section, clause, relation 등의 graph 구조로 다루는 방향으로도 발전하고 있습니다. 이는 답변이 여러 조항, 개념, 문서 간 관계에 의존할 때 도움이 될 수 있습니다. LightRAG가 이 방향의 대표적인 예입니다. See [LightRAG, 2024](https://arxiv.org/abs/2410.05779).
 
 **Parameter-efficient fine-tuning.**  
 QLoRA는 4-bit quantization과 LoRA adapter를 사용해 제한된 GPU 자원에서도 큰 언어모델을 효율적으로 fine-tuning할 수 있게 합니다. 전체 모델을 업데이트하기 어렵지만 특정 도메인에 맞춘 adaptation이 필요한 상황에 적합합니다. See [Dettmers et al., 2023](https://arxiv.org/abs/2305.14314).
@@ -260,7 +260,7 @@ FinGPT 같은 금융 도메인 LLM 연구는 data-centric한 금융 특화 adapt
 학습 단계에서는 4-bit QLoRA를 적용하고, prompt token에는 `-100` label mask를 부여해 assistant 답변 구간만 loss에 반영합니다. 이를 통해 모델이 사용자 prompt를 복사하는 것이 아니라 실제 답변 행동을 학습하도록 합니다. 또한 LoRA target module 설정, train/eval split, constant-length packing, eval-loss checkpointing, early stopping, PEFT adapter 저장을 포함합니다.
 
 **5. Evaluation-aware iteration.**  
-실험은 baseline LLM, RAG-only, QLoRA-only, RAG+QLoRA, GraphRAG+QLoRA를 비교하도록 설계합니다. 목표는 하나의 최종 점수만 보고 끝내는 것이 아니라, retrieval로 줄어드는 실패와 supervised adaptation으로 줄어드는 실패를 분리해 보는 것입니다.
+실험은 baseline LLM, RAG-only, QLoRA-only, RAG+QLoRA, Relational RAG+QLoRA를 비교하도록 설계합니다. 목표는 하나의 최종 점수만 보고 끝내는 것이 아니라, retrieval로 줄어드는 실패와 supervised adaptation으로 줄어드는 실패를 분리해 보는 것입니다.
 
 핵심 아이디어는 간단합니다.
 
@@ -280,7 +280,7 @@ evaluation separates failure modes
 | RAG-only | Yes | No | 근거 검색이 factual grounding을 개선하는지 확인 |
 | QLoRA-only | No | Yes | SFT가 답변 형식과 도메인 응답 스타일을 개선하는지 확인 |
 | RAG + QLoRA | Yes | Yes | 근거 검색과 학습된 답변 행동이 상호 보완적인지 확인 |
-| GraphRAG + QLoRA | Graph-style | Yes | 조항/개념 간 관계가 중요한 문제에서 graph 구조가 도움이 되는지 확인 |
+| Relational RAG + QLoRA | Graph-style | Yes | 조항/개념 간 관계가 중요한 문제에서 graph 구조가 도움이 되는지 확인 |
 
 평가는 다음 항목을 포함할 수 있습니다.
 
@@ -298,7 +298,7 @@ evaluation separates failure modes
 - RAG + QLoRA는 grounding과 answer behavior를 함께 개선할 가능성이 큽니다.
 - Graph-style retrieval은 여러 조항, 정의, 보안 framework 간 관계가 필요한 문제에서 특히 도움이 될 수 있습니다.
 
-이 레포는 따라서 단순히 "GraphRAG를 fine-tuning했다"는 프로젝트가 아닙니다. retrieval은 근거를 찾는 층이고, fine-tuning된 대상은 금융보안 QA에 맞게 적응한 LLM adapter입니다. 프로젝트의 핵심은 retrieval, SFT data construction, assistant-only QLoRA training, evaluation-aware ablation을 하나의 금융보안 QA 파이프라인으로 연결하는 것입니다.
+이 레포의 fine-tuning 대상은 retrieval 모듈이 아니라, 금융보안 QA에 맞게 적응한 LLM adapter입니다. 프로젝트의 핵심은 retrieval, SFT data construction, assistant-only QLoRA training, evaluation-aware ablation을 하나의 금융보안 QA 파이프라인으로 연결하는 것입니다.
 
 ## Notes
 

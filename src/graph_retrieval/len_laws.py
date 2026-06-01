@@ -1,6 +1,6 @@
 import json
 
-data = json.load(open("../../dataset/laws/graphrag/law_graph.json", encoding="utf-8"))
+data = json.load(open("../../dataset/laws/graph_retrieval/law_graph.json", encoding="utf-8"))
 cross_edges = []
 for e in data["edges"]:
     src_law = e["src"].split("_")[0]
