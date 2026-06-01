@@ -194,7 +194,7 @@ PYTHONPATH=src python src/training/train_qlora_exaone.py
 
 The scripts assume local model execution and local datasets. Model weights, trained adapters, full challenge data, and generated submissions are intentionally not included.
 
-## 한국어 버전
+## FinSec-LLM-PostTraining
 
 이 레포는 한국어 금융보안 및 규제 질의응답을 위해 RAG와 QLoRA 기반 supervised post-training을 결합한 프로젝트입니다. FSI AI Challenge Track 1에서 진행한 실험형 프로토타입을 포트폴리오용으로 정리했으며, 핵심 질문은 다음과 같습니다.
 
