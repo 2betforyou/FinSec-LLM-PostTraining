@@ -80,6 +80,14 @@ Challenge-style QA data and domain references are converted into chat-message JS
 
 This makes the training data compatible with instruction-tuned causal LMs.
 
+The fine-tuning data is not raw document text alone. It is a set of supervised examples derived from three sources:
+
+- **law and regulation QA/summary data** built from Korean financial-security laws and related statutes, including examples such as electronic financial transactions, credit information, privacy, electronic signatures, real-name financial transactions, telecommunications network, and electronic commerce laws,
+- **security terminology data** built from Korean security glossary/standard material, where term-definition pairs are converted into concise instruction-output examples,
+- **security framework reference data** built from MITRE-style security descriptions translated/cleaned into Korean, used for security concept explanation and retrieval-aware QA.
+
+Raw laws and security documents are mainly used for retrieval indexing. The supervised fine-tuning scripts train on converted JSONL datasets such as `train.jsonl`, `val.jsonl`, `train_plus_TTA.jsonl`, `val_plus_TTA.jsonl`, and `tta_mitre_sft_plus_ko*.jsonl`.
+
 **4. Assistant-only QLoRA SFT.**  
 The training scripts apply 4-bit QLoRA and mask prompt tokens with `-100`, so the model learns from assistant answer spans rather than simply learning to reproduce user prompts. The pipeline includes LoRA target module configuration, train/eval splits, constant-length packing, eval-loss checkpointing, early stopping, and PEFT adapter saving.
 
@@ -255,6 +263,14 @@ FinGPT 같은 금융 도메인 LLM 연구는 data-centric한 금융 특화 adapt
 ```
 
 이 형식은 instruction-tuned causal LM에 바로 사용할 수 있습니다.
+
+fine-tuning에 사용한 자료는 법령 원문 전체를 그대로 넣은 것이 아니라, 원문과 참고자료를 바탕으로 만든 supervised example입니다. 크게 세 종류입니다.
+
+- **법령/규제 QA 및 요약 데이터**: 전자금융거래법, 신용정보법, 개인정보보호법, 전자서명법, 금융실명법, 정보통신망법, 전자거래기본법 등 금융보안 관련 법령과 조항을 바탕으로 만든 질의응답/요약 데이터
+- **보안 용어 데이터**: 한국어 보안 용어집/표준 자료에서 용어-정의 쌍을 뽑아 간결한 instruction-output 형식으로 만든 데이터
+- **보안 프레임워크 참고 데이터**: MITRE 계열 보안 설명 자료를 한국어로 정제해 보안 개념 설명과 retrieval-aware QA에 활용할 수 있게 만든 데이터
+
+즉, raw 법령과 보안 문서는 주로 retrieval index 구축에 쓰이고, QLoRA SFT는 `train.jsonl`, `val.jsonl`, `train_plus_TTA.jsonl`, `val_plus_TTA.jsonl`, `tta_mitre_sft_plus_ko*.jsonl`처럼 변환된 JSONL supervised dataset을 대상으로 수행합니다.
 
 **4. Assistant-only QLoRA SFT.**  
 학습 단계에서는 4-bit QLoRA를 적용하고, prompt token에는 `-100` label mask를 부여해 assistant 답변 구간만 loss에 반영합니다. 이를 통해 모델이 사용자 prompt를 복사하는 것이 아니라 실제 답변 행동을 학습하도록 합니다. 또한 LoRA target module 설정, train/eval split, constant-length packing, eval-loss checkpointing, early stopping, PEFT adapter 저장을 포함합니다.

@@ -14,6 +14,14 @@ This cleaned repository includes only small synthetic examples under [`examples/
 
 ## SFT Format
 
+Fine-tuning uses converted supervised examples rather than raw documents alone. The original experiment workspace referenced:
+
+- `train.jsonl` and `val.jsonl` for law article QA/summary examples,
+- `train_plus_TTA.jsonl` and `val_plus_TTA.jsonl` for law examples merged with Korean security terminology examples,
+- `tta_mitre_sft_plus_ko*.jsonl` for terminology and security-framework examples used in QLoRA runs.
+
+The source material behind those files includes Korean financial-security laws, related statutes, Korean security terminology/standard material, and MITRE-style security descriptions. Raw text files are primarily retrieval-index sources; SFT scripts train on JSONL examples converted into instruction/chat format.
+
 SFT examples use chat-message JSONL:
 
 ```json
