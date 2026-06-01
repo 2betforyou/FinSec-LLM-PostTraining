@@ -7,10 +7,10 @@ The original research workspace used a mixture of:
 - Korean financial-security laws and enforcement decrees,
 - regulatory and security guidelines,
 - MITRE/security-related reference material,
-- challenge-style QA pairs,
+- domain QA pairs,
 - generated or augmented QA examples for supervised fine-tuning.
 
-This cleaned repository includes only small synthetic examples under [`examples/`](../examples). Full challenge data, generated submissions, model outputs, and any large/private raw documents are excluded.
+This cleaned repository includes only small synthetic examples under [`examples/`](../examples). Full raw datasets, generated outputs, model outputs, and any large/private raw documents are excluded.
 
 ## SFT Format
 

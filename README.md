@@ -2,7 +2,7 @@
 
 RAG and QLoRA-based supervised post-training for Korean financial-security and regulatory QA.
 
-This repository is a cleaned research/portfolio version of an FSI AI Challenge Track 1 prototype. It focuses on a practical question:
+This repository is a research/portfolio project for Korean financial-security QA. It focuses on a practical question:
 
 > How can we make an open-source Korean LLM answer financial-security and regulatory questions more accurately, more concisely, and with better evidence awareness?
 
@@ -72,7 +72,7 @@ Financial-security laws, guidelines, and security references are cleaned, merged
 The retrieval layer uses multilingual E5 embeddings with FAISS, optional BM25, and graph-style retrieval experiments. This gives the model both semantic retrieval and lexical/legal-term matching.
 
 **3. SFT data construction.**  
-Challenge-style QA data and domain references are converted into chat-message JSONL for supervised fine-tuning:
+Domain QA data and reference-derived examples are converted into chat-message JSONL for supervised fine-tuning:
 
 ```json
 {"messages":[{"role":"system","content":"..."},{"role":"user","content":"..."},{"role":"assistant","content":"..."}]}
@@ -144,7 +144,7 @@ src/
   training/      QLoRA SFT and adapter training scripts
   retrieval/     FAISS/BM25 retrieval and RAG generation scripts
   graph_retrieval/ graph-based retrieval experiments
-  inference/     challenge-style inference prototype
+  inference/     inference prototype for domain QA
   evaluation/    answer evaluation helpers
 configs/         example training and retrieval configs
 docs/            project notes, data card, and portfolio summary
@@ -192,11 +192,11 @@ Run QLoRA supervised fine-tuning:
 PYTHONPATH=src python src/training/train_qlora_exaone.py
 ```
 
-The scripts assume local model execution and local datasets. Model weights, trained adapters, full challenge data, and generated submissions are intentionally not included.
+The scripts assume local model execution and local datasets. Model weights, trained adapters, full raw datasets, and generated outputs are intentionally not included.
 
 ## FinSec-LLM-PostTraining
 
-이 레포는 한국어 금융보안 및 규제 질의응답을 위해 RAG와 QLoRA 기반 supervised post-training을 결합한 프로젝트입니다. FSI AI Challenge Track 1에서 진행한 실험형 프로토타입을 포트폴리오용으로 정리했으며, 핵심 질문은 다음과 같습니다.
+이 레포는 한국어 금융보안 및 규제 질의응답을 위해 RAG와 QLoRA 기반 supervised post-training을 결합한 연구/포트폴리오 프로젝트입니다. 핵심 질문은 다음과 같습니다.
 
 > 오픈소스 한국어 LLM이 금융보안/규제 질문에 더 정확하고, 더 간결하며, 더 근거 있게 답하도록 만들려면 어떤 retrieval 및 post-training 파이프라인이 필요한가?
 
@@ -256,7 +256,7 @@ FinGPT 같은 금융 도메인 LLM 연구는 data-centric한 금융 특화 adapt
 검색 단계에서는 multilingual E5 embedding과 FAISS를 사용하고, 선택적으로 BM25와 graph-style retrieval을 결합합니다. 이를 통해 의미 기반 검색과 법령/보안 용어 중심의 lexical matching을 함께 활용합니다.
 
 **3. SFT 데이터 구성.**  
-대회형 QA 데이터와 도메인 reference를 supervised fine-tuning에 사용할 수 있는 chat-message JSONL 형식으로 변환합니다.
+도메인 QA 데이터와 reference 기반 예시를 supervised fine-tuning에 사용할 수 있는 chat-message JSONL 형식으로 변환합니다.
 
 ```json
 {"messages":[{"role":"system","content":"..."},{"role":"user","content":"..."},{"role":"assistant","content":"..."}]}
@@ -318,6 +318,6 @@ evaluation separates failure modes
 
 ## Notes
 
-- This is a cleaned research/portfolio repository, not the full raw competition workspace.
-- Full datasets, model weights, trained adapters, and generated submissions are excluded.
+- This is a cleaned research/portfolio repository, not the full raw experiment workspace.
+- Full datasets, model weights, trained adapters, and generated outputs are excluded.
 - Some scripts preserve experimental paths from the original workspace and may need path updates for a new environment.

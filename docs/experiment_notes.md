@@ -24,7 +24,7 @@ The most important implementation detail is assistant-only label masking. Withou
 
 ## Evaluation Direction
 
-The original challenge contained both multiple-choice and short-answer settings. The cleaned project frames evaluation around:
+The original task setting contained both multiple-choice and short-answer examples. The cleaned project frames evaluation around:
 
 - exact match for multiple-choice outputs,
 - semantic similarity and keyword recall for short-answer outputs,
