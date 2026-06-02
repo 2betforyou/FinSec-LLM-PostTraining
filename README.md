@@ -108,33 +108,35 @@ SFT teaches answer behavior
 evaluation separates failure modes
 ```
 
-## 5. Expected Experimental Results: How Do We Show It Works?
+## 5. Experimental Results: What Was Actually Built?
 
-The expected experiments compare the following systems:
+This repository does not claim a production benchmark result. Instead, the concrete outcome of the project is a reproducible data, retrieval, and QLoRA SFT pipeline for Korean financial-security QA.
 
-| System | Retrieval | Fine-tuning | Expected Role |
-| --- | --- | --- | --- |
-| Base LLM | No | No | Measures the raw model's domain knowledge |
-| RAG-only | Yes | No | Tests whether evidence retrieval improves factual grounding |
-| QLoRA-only | No | Yes | Tests whether SFT improves format and domain response style |
-| RAG + QLoRA | Yes | Yes | Tests whether evidence and learned answer behavior are complementary |
-| Relational RAG + QLoRA | Graph-style | Yes | Tests whether relational document structure helps harder regulatory questions |
+The actual artifacts from the experiment workspace are:
 
-Evaluation should include:
+| Component | Actual Result |
+| --- | --- |
+| Law QA/summary SFT data | 995 train examples and 107 validation examples |
+| Law + terminology SFT data | 1,452 train examples and 157 validation examples |
+| Security terminology/framework SFT data | 6,413 to 14,509 instruction-style examples, depending on the cleaned data variant |
+| Cleaned legal/security sources | 30 cleaned law/statute/security text files used for retrieval and SFT construction |
+| Retrieval index | Up to 2,075 law/security chunks for hybrid retrieval; 847 security-framework chunks in a separate security index |
+| Training pipeline | QLoRA SFT scripts for EXAONE-style and finance-domain models with assistant-only label masking |
+| Evaluation pipeline | Evaluation-loss/perplexity script for answer-only validation and inference scripts for retrieval-conditioned QA |
 
-- **MCQ accuracy** for multiple-choice questions,
-- **short-answer similarity** and **keyword recall** for descriptive answers,
-- **retrieval hit rate** for whether the needed clause/reference is retrieved,
-- **answer faithfulness** for whether the generated answer is supported by retrieved context,
-- **format validity** for whether the model follows required answer schemas,
-- **failure taxonomy** such as `retrieval_miss`, `wrong_clause`, `unsupported_answer`, `over_answering`, `format_error`, and `domain_term_confusion`.
+The most important verified result is structural: raw legal/security sources were separated from supervised learning targets. Raw documents are used to build retrieval indices, while fine-tuning uses converted answer-focused JSONL examples. This avoids treating long legal text as generic language-modeling data and instead trains the model on the behavior needed for financial-security QA: concise answers, structured summaries, security terminology explanations, and evidence-aware response formats.
 
-The expected pattern is:
+The project also establishes the ablation structure needed for future quantitative evaluation:
 
-- RAG-only should reduce unsupported answers but may still be verbose or format-unstable.
-- QLoRA-only should improve answer style and task format but may still miss evidence.
-- RAG + QLoRA should improve both grounding and answer behavior.
-- Graph-style retrieval should help most when the question depends on relationships across clauses, definitions, or security frameworks.
+| System | What It Tests |
+| --- | --- |
+| Base LLM | Raw model knowledge without retrieval or domain adaptation |
+| RAG-only | Whether retrieved evidence improves grounding |
+| QLoRA-only | Whether SFT improves answer style and task format |
+| RAG + QLoRA | Whether evidence retrieval and learned answer behavior are complementary |
+| Relational RAG + QLoRA | Whether graph-style document structure helps questions involving clause or concept relationships |
+
+Quantitative accuracy numbers are intentionally left for a reproducible held-out evaluation. The next step is to run the same QA set across these variants and report MCQ accuracy, short-answer similarity/keyword recall, retrieval hit rate, answer faithfulness, and format validity.
 
 ## Repository Map
 
@@ -286,33 +288,35 @@ SFT teaches answer behavior
 evaluation separates failure modes
 ```
 
-### 5. 예상 실험 결과: 방법이 실제로 문제를 해결하는지 어떻게 보일 것인가?
+### 5. 실제 실험 결과: 무엇을 만들고 확인했는가?
 
-예상 실험은 다음 시스템들을 비교합니다.
+이 레포에서는 production benchmark 성능을 주장하지 않습니다. 대신 한국어 금융보안 QA를 위한 데이터 구성, retrieval, QLoRA SFT 파이프라인이 실제로 어떤 산출물로 만들어졌는지를 명확히 정리합니다.
 
-| System | Retrieval | Fine-tuning | Expected Role |
-| --- | --- | --- | --- |
-| Base LLM | No | No | 기본 모델의 금융보안 도메인 지식 측정 |
-| RAG-only | Yes | No | 근거 검색이 factual grounding을 개선하는지 확인 |
-| QLoRA-only | No | Yes | SFT가 답변 형식과 도메인 응답 스타일을 개선하는지 확인 |
-| RAG + QLoRA | Yes | Yes | 근거 검색과 학습된 답변 행동이 상호 보완적인지 확인 |
-| Relational RAG + QLoRA | Graph-style | Yes | 조항/개념 간 관계가 중요한 문제에서 graph 구조가 도움이 되는지 확인 |
+실험 작업공간에서 만들어진 실제 산출물은 다음과 같습니다.
 
-평가는 다음 항목을 포함할 수 있습니다.
+| Component | Actual Result |
+| --- | --- |
+| 법령 QA/요약 SFT 데이터 | train 995개, validation 107개 |
+| 법령 + 보안 용어 SFT 데이터 | train 1,452개, validation 157개 |
+| 보안 용어/프레임워크 SFT 데이터 | 정제 버전에 따라 6,413개에서 14,509개의 instruction-style example |
+| 정제된 법령/보안 자료 | retrieval 및 SFT 구성에 사용한 정제 텍스트 30개 |
+| Retrieval index | hybrid retrieval용 법령/보안 chunk 최대 2,075개, 별도 보안 프레임워크 index 847개 |
+| 학습 파이프라인 | EXAONE 계열 및 금융 도메인 모델용 QLoRA SFT script, assistant-only label masking 포함 |
+| 평가 파이프라인 | answer-only validation용 eval loss/perplexity script와 retrieval-conditioned QA inference script |
 
-- 객관식 문제의 MCQ accuracy
-- 주관식 답변의 semantic similarity와 keyword recall
-- 필요한 조항이나 reference가 검색되었는지 보는 retrieval hit rate
-- 생성 답변이 검색된 context에 의해 뒷받침되는지 보는 answer faithfulness
-- 요구된 답변 형식을 지키는지 보는 format validity
-- `retrieval_miss`, `wrong_clause`, `unsupported_answer`, `over_answering`, `format_error`, `domain_term_confusion` 같은 failure taxonomy
+가장 중요한 결과는 raw 법령/보안 문서와 supervised learning target을 분리했다는 점입니다. 원문은 retrieval index 구축에 사용하고, fine-tuning은 답변 행동을 학습할 수 있도록 변환한 JSONL example을 대상으로 수행합니다. 이를 통해 긴 법령 텍스트를 단순 language modeling data처럼 쓰는 것이 아니라, 금융보안 QA에 필요한 간결한 답변, 구조화된 요약, 보안 용어 설명, 근거 중심 응답 형식을 학습하도록 구성했습니다.
 
-예상되는 결과는 다음과 같습니다.
+또한 이후 정량 평가를 위한 ablation 구조도 마련했습니다.
 
-- RAG-only는 unsupported answer를 줄일 수 있지만, 답변이 장황하거나 형식이 불안정할 수 있습니다.
-- QLoRA-only는 답변 스타일과 task format을 개선할 수 있지만, 근거 문서 접근이 부족할 수 있습니다.
-- RAG + QLoRA는 grounding과 answer behavior를 함께 개선할 가능성이 큽니다.
-- Graph-style retrieval은 여러 조항, 정의, 보안 framework 간 관계가 필요한 문제에서 특히 도움이 될 수 있습니다.
+| System | What It Tests |
+| --- | --- |
+| Base LLM | retrieval과 domain adaptation 없이 기본 모델 지식만 평가 |
+| RAG-only | 검색 근거가 답변 grounding을 개선하는지 평가 |
+| QLoRA-only | SFT가 답변 형식과 도메인 응답 스타일을 개선하는지 평가 |
+| RAG + QLoRA | 근거 검색과 학습된 답변 행동이 상호 보완적인지 평가 |
+| Relational RAG + QLoRA | 조항/개념 관계가 필요한 질문에서 graph-style 구조가 도움이 되는지 평가 |
+
+정량 accuracy는 재현 가능한 held-out evaluation에서 보고하는 것으로 남겨두었습니다. 다음 정량 실험에서는 동일한 QA set에 대해 MCQ accuracy, short-answer similarity/keyword recall, retrieval hit rate, answer faithfulness, format validity를 비교하는 것이 자연스러운 후속 단계입니다.
 
 이 레포의 fine-tuning 대상은 retrieval 모듈이 아니라, 금융보안 QA에 맞게 적응한 LLM adapter입니다. 프로젝트의 핵심은 retrieval, SFT data construction, assistant-only QLoRA training, evaluation-aware ablation을 하나의 금융보안 QA 파이프라인으로 연결하는 것입니다.
 
