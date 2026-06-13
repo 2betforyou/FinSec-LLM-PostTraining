@@ -2,6 +2,15 @@
 
 RAG and QLoRA-based supervised post-training for Korean financial-security and regulatory QA.
 
+## Project Status
+
+This is an early-stage open-source research and engineering project. The public baseline includes reproducible scripts, small examples, documentation, an MIT license, contribution guidance, a security policy, and lightweight smoke tests.
+
+- License: [MIT](LICENSE)
+- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Roadmap: [ROADMAP.md](ROADMAP.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+
 This repository is a research/portfolio project for Korean financial-security QA. It focuses on a practical question:
 
 > How can we make an open-source Korean LLM answer financial-security and regulatory questions more accurately, more concisely, and with better evidence awareness?
